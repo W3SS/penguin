@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:paddingEnd="@dimen/content_horizontal_margin"
+    android:paddingLeft="@dimen/content_horizontal_margin"
+    android:paddingRight="@dimen/content_horizontal_margin"
+    android:paddingStart="@dimen/content_horizontal_margin">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:minHeight="57dp"
+        android:minWidth="57dp"
+        app:srcCompat="@mipmap/ic_launcher" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        app:srcCompat="@mipmap/ic_arrow" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@id/icon"
+        android:layout_toLeftOf="@id/option"
+        android:layout_toRightOf="@id/icon"
+        android:layout_toStartOf="@id/option"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Android"
+            android:textColor="#222"
+            android:textSize="17sp" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="2 ITEMS | 17/2/17 AM 8:20"
+            android:textSize="12sp" />
+    </LinearLayout>
+</RelativeLayout>

@@ -1,3 +1,3 @@
-# penguin - The penguin file manager
+# Penguin - The penguin file manager
 
 A file manager for Android.
