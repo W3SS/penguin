@@ -41,6 +41,8 @@ class DirectoryFragment : Fragment() {
 
     private lateinit var item: Item
 
+    private val selections = LinkedHashSet<Item>()
+
     private val adapter by lazy { Adapter(context) }
 
     private val infoBar: View by lazyView(R.id.info_bar)
@@ -77,6 +79,72 @@ class DirectoryFragment : Fragment() {
         RefreshTask(item).execute()
     }
 
+    class Holder(view: View) : RecyclerView.ViewHolder(view) {
+        val icon: ImageView = view[R.id.icon]
+        val name: TextView = view[R.id.name]
+        val info: TextView = view[R.id.info]
+        val option: ImageView = view[R.id.option]
+    }
+
+    class Adapter(val ctx: Context) : RecyclerView.Adapter<Holder>() {
+        val inflater: LayoutInflater = LayoutInflater.from(ctx)
+
+        var isSelectionMode = false
+
+        var items = emptyList<Item>()
+            set(value) {
+                field = value
+                notifyDataSetChanged()
+            }
+
+        override fun getItemCount(): Int = items.size
+
+        override fun onBindViewHolder(holder: Holder, position: Int) {
+            val item = items[position]
+            bindData(holder, item, isSelectionMode)
+            holder.itemView.tag = item
+            holder.itemView.setOnClickListener {
+                val item = it.tag as Item
+                if (isSelectionMode) {
+
+                } else {
+
+                }
+            }
+        }
+
+        fun bindData(holder: Holder, item: Item, isSelectionMode: Boolean) {
+            val file = item.file
+            holder.name.text = file.name
+            val date = Date(file.lastModified())
+            if (file.isDirectory) {
+                holder.icon.setImageResource(if (item.count <= 0) R.mipmap.ic_folder_empty else R.mipmap.ic_folder)
+                holder.option.visibility = View.VISIBLE
+                if (isSelectionMode) {
+                    holder.option.setImageResource(if (item.isSelected) android.R.drawable.checkbox_on_background else android.R.drawable.checkbox_off_background)
+                } else {
+                    holder.option.setImageResource(R.mipmap.ic_arrow)
+                }
+                holder.info.text = ctx.resources.getQuantityString(R.plurals.folder_info, item.count, item.count, date, date)
+            } else {
+                holder.icon.setImageResource(R.mipmap.ic_file)
+                if (isSelectionMode) {
+                    holder.option.visibility = View.VISIBLE
+                    holder.option.setImageResource(if (item.isSelected) android.R.drawable.checkbox_on_background else android.R.drawable.checkbox_off_background)
+                } else {
+                    holder.option.visibility = View.GONE
+                }
+                holder.info.text = ctx.getString(R.string.file_info, readableSize(file.length()), date, date)
+            }
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): Holder {
+            val view = inflater.inflate(R.layout.file_item, parent, false)
+            return Holder(view)
+        }
+
+    }
+
     inner class RefreshTask(val item: Item) : AsyncTask<Unit, Unit, List<Item>>() {
         var isProgressShown = false
 
@@ -84,13 +152,12 @@ class DirectoryFragment : Fragment() {
             val items = ArrayList<Item>()
 
             val names = item.file.list() ?: return items
-            names.map { File(item.file, it) }
-                    .filter { PenguinFilter.accept(it) }
+            names.map { Item(File(item.file, it)) }
+                    .filter { PenguinFilter.accept(it.file) }
                     .sortedWith(PenguinSorter)
-                    .mapTo(items) {
-                        val item = Item(it)
-                        item.count = item.file.list()?.size ?: 0
-                        item
+                    .forEach {
+                        it.count = it.file.list()?.size ?: 0
+                        items.add(it)
                     }
             item.count = names.size
             return items
@@ -115,56 +182,4 @@ class DirectoryFragment : Fragment() {
             }
         }
     }
-}
-
-class Holder(view: View) : RecyclerView.ViewHolder(view) {
-    val icon: ImageView = view[R.id.icon]
-    val name: TextView = view[R.id.name]
-    val info: TextView = view[R.id.info]
-    val option: ImageView = view[R.id.option]
-
-    fun bindData(item: Item, isSelectionMode: Boolean) {
-        val file = item.file
-        name.text = file.name
-        if (file.isDirectory) {
-            icon.setImageResource(if (item.count <= 0) R.mipmap.ic_folder_empty else R.mipmap.ic_folder)
-            option.visibility = View.VISIBLE
-            if (isSelectionMode) {
-                option.setImageResource(if (item.isSelected) android.R.drawable.checkbox_on_background else android.R.drawable.checkbox_off_background)
-            } else {
-                option.setImageResource(R.mipmap.ic_arrow)
-            }
-        } else {
-            icon.setImageResource(R.mipmap.ic_file)
-            if (isSelectionMode) {
-                option.visibility = View.VISIBLE
-                option.setImageResource(if (item.isSelected) android.R.drawable.checkbox_on_background else android.R.drawable.checkbox_off_background)
-            } else {
-                option.visibility = View.GONE
-            }
-        }
-    }
-}
-
-class Adapter(ctx: Context) : RecyclerView.Adapter<Holder>() {
-    val inflater: LayoutInflater = LayoutInflater.from(ctx)
-
-    var isSelectionMode = false
-
-    var items = emptyList<Item>()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
-
-    override fun getItemCount(): Int = items.size
-
-    override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.bindData(items[position], isSelectionMode)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): Holder {
-        return Holder(inflater.inflate(R.layout.file_item, parent, false))
-    }
-
 }

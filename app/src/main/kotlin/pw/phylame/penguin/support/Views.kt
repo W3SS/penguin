@@ -3,14 +3,14 @@ package pw.phylame.penguin.support
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
-import android.support.annotation.IdRes
-import android.view.View
-import android.support.v7.widget.RecyclerView
-import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.support.annotation.IdRes
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.view.View
 
 
 @Suppress("UNCHECKED_CAST")
@@ -19,6 +19,14 @@ operator fun <T : View> View.get(@IdRes id: Int): T = findViewById(id) as T
 fun <T : View> View.lazyView(@IdRes id: Int): Lazy<T> = lazy {
     @Suppress("UNCHECKED_CAST")
     findViewById(id) as T
+}
+
+@Suppress("UNCHECKED_CAST")
+operator fun <T : View> Fragment.get(@IdRes id: Int): T = view!!.findViewById(id) as T
+
+fun <T : View> Fragment.lazyView(@IdRes id: Int): Lazy<T> = lazy {
+    @Suppress("UNCHECKED_CAST")
+    view!!.findViewById(id) as T
 }
 
 fun View.showAnimated(shown: Boolean) {

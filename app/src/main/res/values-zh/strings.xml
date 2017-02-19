@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">文件</string>
+    <string name="app_name">Penguin</string>
     <string name="action_selection">选择</string>
     <string name="action_settings">设置</string>
     <string name="tab_category_title">分类</string>
     <string name="action_search">搜索</string>
     <string name="device_phone">内部存储</string>
+    <string name="read_permission_failed">授权失败，应用可能出现异常</string>
+    <plurals name="folder_info">
+        <item quantity="other">%1$d 项 | %2$tD %2$tR</item>
+    </plurals>
+    <string name="file_info">%1$s | %2$tD %2$tR</string>
 </resources>

@@ -1,22 +1,22 @@
 package pw.phylame.penguin.activities
 
+import android.Manifest
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.os.EnvironmentCompat
 import android.support.v4.view.ViewPager
 import android.view.Menu
+import android.widget.Toast
 import pw.phylame.penguin.R
 import pw.phylame.penguin.fragments.CategoryFragment
 import pw.phylame.penguin.fragments.DirectoryFragment
 import pw.phylame.penguin.support.BaseActivity
 import pw.phylame.penguin.support.get
+import pw.phylame.penguin.support.hasPermission
 import java.util.*
 
 class PenguinActivity : BaseActivity() {
@@ -36,6 +36,22 @@ class PenguinActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
+        if (!hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            permissions
+                    .request(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    .subscribe { granted ->
+                        if (!granted) {
+                            Toast.makeText(this, R.string.read_permission_failed, Toast.LENGTH_SHORT).show()
+                        } else {
+                            initDevices()
+                        }
+                    }
+        } else {
+            initDevices()
+        }
+    }
+
+    private fun initDevices() {
         val devices = ArrayList<Device>()
 
         devices.add(Device(Environment.getExternalStorageDirectory().path, getString(R.string.device_phone)))
